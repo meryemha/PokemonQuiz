@@ -8,6 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
@@ -128,13 +130,21 @@ fun ContentPlayScreen(
             label = { Text("Votre réponse") },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 16.dp)
+                .semantics {
+                    contentDescription = "Insérez votre réponse"
+                }
         )
 
-        Button(onClick = {
-            val correct = userAnswer.equals(uiState.name, ignoreCase = true)
-            onValidateAnswer(correct) // Appel de la validation
-        }) {
+
+        Button(
+            onClick = {
+                val correct = userAnswer.equals(uiState.name, ignoreCase = true)
+                onValidateAnswer(correct) // Appel de la validation
+            },
+            modifier = Modifier.semantics {
+                contentDescription = "Valider"
+            }
+        ) {
             Text("Valider")
         }
 
@@ -142,12 +152,33 @@ fun ContentPlayScreen(
 
         // Résultat de la validation
         when (isCorrect) {
-            true -> Text("Bonne réponse !", color = MaterialTheme.colorScheme.primary)
-            false -> Text("Mauvaise réponse. C'était ${uiState.name}.", color = MaterialTheme.colorScheme.error)
+            true -> Text(
+                text = "Bonne réponse !",
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.semantics {
+                    contentDescription = "Bonne réponse"
+                }
+            )
+            false -> Text(
+                text = "Mauvaise réponse. C'était ${uiState.name}.",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics {
+                    contentDescription = "Mauvaise réponse, la bonne réponse était ${uiState.name}"
+                }
+            )
             null -> {}
         }
 
+
         // Compteur de question
-        Text("Question : $currentQuestion / 10", modifier = Modifier.padding(top = 16.dp))
+        Text(
+            text = "Question : $currentQuestion / 10",
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .semantics {
+                    // TalkBack lira ce contenu au lieu du texte brut
+                    contentDescription = "Question : $currentQuestion sur dix"
+                }
+        )
     }
 }

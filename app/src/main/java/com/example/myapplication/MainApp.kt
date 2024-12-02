@@ -61,11 +61,11 @@ fun NavigationGraph(navController: NavHostController, fileManager: FileManager, 
     NavHost(navController, startDestination = "play") {
         composable("play") { PlayScreen(navController) }
         composable("leaderboard") {
-            LeaderboardScreen(fileManager, currentUserName = "") // Aucun utilisateur actuel
+            LeaderboardScreen(fileManager, currentUserName = "", title = "Classement") // Aucun utilisateur actuel
         }
-        composable("leaderboard/{currentUserName}") { backStackEntry ->
+        composable("your_leaderboard/{currentUserName}") { backStackEntry ->
             val currentUserName = backStackEntry.arguments?.getString("currentUserName") ?: ""
-            LeaderboardScreen(fileManager, currentUserName)
+            LeaderboardScreen(fileManager, currentUserName, title = "Votre classement")
         }
         composable("settings") {
             SettingsScreen(
